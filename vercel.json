@@ -2,10 +2,14 @@
   "version": 2,
   "experimentalServices": {
     "frontend": {
-      "entrypoint": "frontend"
+      "entrypoint": "frontend",
+      "buildCommand": "npm run build",
+      "installCommand": "npm install",
+      "outputDirectory": "dist"
     },
     "backend": {
-      "entrypoint": "backend"
+      "entrypoint": "backend",
+      "installCommand": "npm install"
     }
   }
 }
