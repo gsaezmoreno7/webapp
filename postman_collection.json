@@ -1,0 +1,468 @@
+{
+  "info": {
+    "name": "🏦 Banco en Línea API",
+    "description": "Colección completa de endpoints para el sistema de Banca en Línea.\n\nUso:\n1. Ejecuta 'POST /api/auth/login' primero\n2. Copia el access_token de la respuesta\n3. Pégalo en la variable de entorno {{token}}\n4. Todos los endpoints protegidos usan {{token}} automáticamente",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string",
+      "description": "URL base del servidor. Cambiar a https://banco-api.vercel.app en producción"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string",
+      "description": "JWT obtenido después del login. Copiar desde la respuesta de /api/auth/login"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔐 Autenticación",
+      "item": [
+        {
+          "name": "Registrar Usuario",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario@ejemplo.cl\",\n  \"password\": \"ClaveSegura123!\",\n  \"full_name\": \"Juan Pérez González\",\n  \"rut\": \"12.345.678-9\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "description": "Registra un nuevo usuario y crea su cuenta bancaria con saldo inicial de $2.500.000 CLP."
+          },
+          "response": []
+        },
+        {
+          "name": "Login (Obtener Token)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const data = pm.response.json();",
+                  "    if (data.session && data.session.access_token) {",
+                  "        pm.collectionVariables.set('token', data.session.access_token);",
+                  "        console.log('✅ Token guardado automáticamente');",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"usuario@ejemplo.cl\",\n  \"password\": \"ClaveSegura123!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "description": "Inicia sesión y obtiene un JWT. El token se guarda automáticamente en la variable {{token}} via test script."
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/logout",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
+            },
+            "description": "Cierra la sesión actual e invalida el token JWT."
+          },
+          "response": []
+        },
+        {
+          "name": "Renovar Token (Refresh)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"tu_refresh_token_aqui\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "refresh"]
+            },
+            "description": "Renueva el access token usando el refresh token de Supabase."
+          },
+          "response": []
+        },
+        {
+          "name": "Cambiar Contraseña",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"new_password\": \"NuevaClaveSegura456!\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/change-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "change-password"]
+            },
+            "description": "Actualiza la contraseña del usuario autenticado."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💳 Cuenta Bancaria",
+      "item": [
+        {
+          "name": "Ver Mi Cuenta",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/account",
+              "host": ["{{base_url}}"],
+              "path": ["api", "account"]
+            },
+            "description": "Obtiene la información completa de la cuenta bancaria del usuario autenticado."
+          },
+          "response": []
+        },
+        {
+          "name": "Ver Saldo",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/account/balance",
+              "host": ["{{base_url}}"],
+              "path": ["api", "account", "balance"]
+            },
+            "description": "Obtiene únicamente el saldo actual de la cuenta en CLP."
+          },
+          "response": []
+        },
+        {
+          "name": "Bloquear Tarjeta",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/account/card/block",
+              "host": ["{{base_url}}"],
+              "path": ["api", "account", "card", "block"]
+            },
+            "description": "Bloquea la tarjeta asociada a la cuenta del usuario."
+          },
+          "response": []
+        },
+        {
+          "name": "Desbloquear Tarjeta",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/account/card/unblock",
+              "host": ["{{base_url}}"],
+              "path": ["api", "account", "card", "unblock"]
+            },
+            "description": "Desbloquea la tarjeta de la cuenta del usuario."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "💰 Transacciones",
+      "item": [
+        {
+          "name": "Depósito",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 500000,\n  \"description\": \"Depósito de sueldo mensual\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/transactions/deposit",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "deposit"]
+            },
+            "description": "Deposita dinero en la cuenta del usuario. Monto mínimo $1.000, máximo $50.000.000 CLP."
+          },
+          "response": []
+        },
+        {
+          "name": "Retiro (Giro)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 50000,\n  \"description\": \"Retiro cajero automático\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/transactions/withdraw",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "withdraw"]
+            },
+            "description": "Retira dinero de la cuenta. Valida saldo suficiente. Monto mínimo $1.000, máximo $10.000.000 CLP."
+          },
+          "response": []
+        },
+        {
+          "name": "Transferencia a Terceros",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 100000,\n  \"destination_account\": \"GB-1234-GOLD\",\n  \"description\": \"Pago arriendo enero 2026\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/transactions/transfer",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "transfer"]
+            },
+            "description": "Transfiere fondos a otra cuenta. Valida saldo suficiente y cuenta destino existente. Monto mínimo $1.000, máximo $20.000.000 CLP."
+          },
+          "response": []
+        },
+        {
+          "name": "Historial de Transacciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/transactions?page=1&limit=20",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" },
+                { "key": "type", "value": "", "disabled": true, "description": "Filtrar por: deposit, withdrawal, transfer_in, transfer_out" }
+              ]
+            },
+            "description": "Lista el historial de transacciones del usuario con paginación."
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de Transacción",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/transactions/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", ":id"],
+              "variable": [
+                { "key": "id", "value": "uuid-de-la-transaccion", "description": "UUID de la transacción" }
+              ]
+            },
+            "description": "Obtiene el detalle completo de una transacción específica por su UUID."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "👤 Perfil",
+      "item": [
+        {
+          "name": "Ver Perfil",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/profile",
+              "host": ["{{base_url}}"],
+              "path": ["api", "profile"]
+            },
+            "description": "Obtiene el perfil completo del usuario autenticado."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🛡️ Administrador",
+      "item": [
+        {
+          "name": "Estadísticas del Sistema",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}", "description": "Token del usuario ADMIN" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "stats"]
+            },
+            "description": "Retorna estadísticas globales del sistema: cuentas, transacciones, fondos y uptime. SOLO ADMINISTRADOR."
+          },
+          "response": []
+        },
+        {
+          "name": "Listar Todas las Cuentas",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/accounts",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "accounts"]
+            },
+            "description": "Lista todas las cuentas bancarias del sistema con información de titulares. SOLO ADMINISTRADOR."
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de Cuenta (Admin)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/accounts/:id",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "accounts", ":id"],
+              "variable": [
+                { "key": "id", "value": "uuid-de-la-cuenta" }
+              ]
+            },
+            "description": "Ver detalle completo de una cuenta con sus últimas 10 transacciones. SOLO ADMINISTRADOR."
+          },
+          "response": []
+        },
+        {
+          "name": "Activar/Desactivar Cuenta",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/accounts/:id/toggle",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "accounts", ":id", "toggle"],
+              "variable": [
+                { "key": "id", "value": "uuid-de-la-cuenta" }
+              ]
+            },
+            "description": "Cambia el estado activo/inactivo de una cuenta bancaria. SOLO ADMINISTRADOR."
+          },
+          "response": []
+        },
+        {
+          "name": "Auditoría Global de Transacciones",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/admin/transactions?page=1&limit=30",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "transactions"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "30" },
+                { "key": "type", "value": "deposit", "disabled": true, "description": "Filtrar por: deposit, withdrawal, transfer_in, transfer_out" }
+              ]
+            },
+            "description": "Lista TODAS las transacciones del sistema con paginación. SOLO ADMINISTRADOR."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🔧 Sistema",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Verifica que el servidor está en línea y muestra uptime."
+          },
+          "response": []
+        },
+        {
+          "name": "Raíz API (Info)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Información general de la API y lista de endpoints disponibles."
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,176 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+
+:root {
+  --gold: #c0a060;
+  --bg-deep: #050508;
+  --bg-card: #12121a;
+  --bg-input: #1c1c26;
+  --text-main: #ffffff;
+  --text-muted: #a1a1aa;
+  --border: #27272a;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  overflow-x: hidden;
+}
+
+/* CONTENEDOR PRINCIPAL */
+.container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* TARJETA BANCARIA */
+.bank-card {
+  background: linear-gradient(135deg, #c0a060 0%, #8a6e3d 100%);
+  color: #000;
+  padding: 40px;
+  border-radius: 30px;
+  margin-bottom: 30px;
+  box-shadow: 0 20px 40px rgba(192, 160, 96, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 240px;
+}
+
+.card-amount {
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+
+.card-number {
+  font-family: monospace;
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+}
+
+/* BOTONES DE ACCIÓN */
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin-bottom: 40px;
+}
+
+@media (max-width: 600px) {
+  .actions-grid { grid-template-columns: 1fr; }
+}
+
+.action-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.action-btn:hover {
+  border-color: var(--gold);
+  background: #1a1a24;
+}
+
+.action-btn i { font-size: 24px; color: var(--gold); }
+
+/* LISTA DE MOVIMIENTOS */
+.history-section {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 30px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-item:last-child { border-bottom: none; }
+
+.amount-positive { color: #10b981; font-weight: 700; }
+.amount-negative { color: #ffffff; font-weight: 700; }
+
+/* MODALES */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  width: 100%;
+  max-width: 450px;
+  padding: 40px;
+  border-radius: 28px;
+  border: 1px solid var(--border);
+}
+
+/* INPUTS */
+.form-group { margin-bottom: 20px; }
+.label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; }
+.input {
+  width: 100%;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 16px;
+}
+.input:focus { border-color: var(--gold); outline: none; }
+
+/* LOGIN ESPECIAL - GRANDE Y CENTRAL */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: radial-gradient(circle at center, #1a1a2e 0%, #050508 100%);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 500px;
+  background: var(--bg-card);
+  padding: 60px 40px;
+  border-radius: 40px;
+  border: 1px solid var(--border);
+  box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+  text-align: center;
+}
+
+.login-card h1 {
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 30px;
+  color: var(--gold);
+}
+
+.login-card .form-group {
+  text-align: left;
+}
